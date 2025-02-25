@@ -1,10 +1,15 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 with lib;
 
 let
   cfg = config.hardware.asahi.touchbar;
-  configFormat = pkgs.formats.toml {};
+  configFormat = pkgs.formats.toml { };
 in
 
 {
@@ -15,32 +20,33 @@ in
       type = configFormat.type;
       default = { };
       example = literalExpression ''
-        {
-	  MediaLayerDefault = true;
-	  MediaLayerKeys = [
-	    { Icon = "brightness_low"; Action = "BrightnessDown"; }
-	    { Icon = "brightness_high"; Action = "BrightnessUp"; }
-	    { Icon = "mic_off"; Action = "MicMute"; }
-	    { Icon = "search"; Action = "Search"; }
-	    { Icon = "backlight_low"; Action = "IllumDown"; }
-	    { Icon = "backlight_high"; Action = "IllumUp"; }
-	    { Icon = "fast_rewind"; Action = "PreviousSong"; }
-	    { Icon = "play_pause"; Action = "PlayPause"; }
-	    { Icon = "fast_forward"; Action = "NextSong"; }
-	    { Icon = "volume_off"; Action = "Mute"; }
-	    { Icon = "volume_down"; Action = "VolumeDown"; }
-	    { Icon = "volume_up"; Action = "VolumeUp"; }
-	  ];
-	}
+                {
+        	  MediaLayerDefault = true;
+        	  MediaLayerKeys = [
+        	    { Icon = "brightness_low"; Action = "BrightnessDown"; }
+        	    { Icon = "brightness_high"; Action = "BrightnessUp"; }
+        	    { Icon = "mic_off"; Action = "MicMute"; }
+        	    { Icon = "search"; Action = "Search"; }
+        	    { Icon = "backlight_low"; Action = "IllumDown"; }
+        	    { Icon = "backlight_high"; Action = "IllumUp"; }
+        	    { Icon = "fast_rewind"; Action = "PreviousSong"; }
+        	    { Icon = "play_pause"; Action = "PlayPause"; }
+        	    { Icon = "fast_forward"; Action = "NextSong"; }
+        	    { Icon = "volume_off"; Action = "Mute"; }
+        	    { Icon = "volume_down"; Action = "VolumeDown"; }
+        	    { Icon = "volume_up"; Action = "VolumeUp"; }
+        	  ];
+        	}
       '';
     };
   };
 
   config = lib.mkIf cfg.enable {
-    environment.etc."tiny-dfr/config.toml".source = configFormat.generate "tiny-dfr-config" cfg.extraConfig;
+    environment.etc."tiny-dfr/config.toml".source =
+      configFormat.generate "tiny-dfr-config" cfg.extraConfig;
 
-    systemd.services."systemd-backlight@backlight:228200000.display-pipe.0" = {};
-    systemd.services."systemd-backlight@backlight:appletb_backlight" = {};
+    systemd.services."systemd-backlight@backlight:228200000.display-pipe.0" = { };
+    systemd.services."systemd-backlight@backlight:appletb_backlight" = { };
 
     systemd.services.tiny-dfr = {
       enable = true;

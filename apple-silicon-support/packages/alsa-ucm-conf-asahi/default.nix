@@ -1,6 +1,8 @@
-{ lib
-, fetchFromGitHub
-, alsa-ucm-conf }:
+{
+  lib,
+  fetchFromGitHub,
+  alsa-ucm-conf,
+}:
 
 (alsa-ucm-conf.overrideAttrs (oldAttrs: rec {
   version = "6";
@@ -12,8 +14,10 @@
     rev = "v${version}";
     hash = "sha256-xTCGBohJz+VbHUvEoT3upwD8c+mSo2l7zncA1VIpZKg=";
   };
-  
-  postInstall = oldAttrs.postInstall or "" + ''
-    cp -r ${src_asahi}/ucm2 $out/share/alsa
-  '';
+
+  postInstall =
+    oldAttrs.postInstall or ""
+    + ''
+      cp -r ${src_asahi}/ucm2 $out/share/alsa
+    '';
 }))

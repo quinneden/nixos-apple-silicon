@@ -1,11 +1,12 @@
 # the Asahi Linux kernel and options that must go along with it
 
-{ config, pkgs, lib, ... }:
+{ config, lib, ... }:
 {
   config = lib.mkIf config.hardware.asahi.enable {
-    boot.kernelPackages = let
-      pkgs' = config.hardware.asahi.pkgs;
-    in
+    boot.kernelPackages =
+      let
+        pkgs' = config.hardware.asahi.pkgs;
+      in
       pkgs'.linux-asahi.override {
         _kernelPatches = config.boot.kernelPatches;
         withRust = config.hardware.asahi.withRust;
@@ -26,7 +27,6 @@
     # if you're using a USB cellular internet modem (e.g. 4G, LTE, 5G, etc), then don't disable ModemManager
     systemd.services.mount-pstore.enable = lib.mkDefault false;
     systemd.services.ModemManager.enable = lib.mkDefault false;
-
 
     boot.initrd.includeDefaultModules = false;
     boot.initrd.availableKernelModules = [
@@ -100,8 +100,11 @@
   };
 
   imports = [
-    (lib.mkRemovedOptionModule [ "hardware" "asahi" "addEdgeKernelConfig" ]
-      "All edge kernel config options are now the default.")
+    (lib.mkRemovedOptionModule [
+      "hardware"
+      "asahi"
+      "addEdgeKernelConfig"
+    ] "All edge kernel config options are now the default.")
   ];
 
   options.hardware.asahi.withRust = lib.mkOption {

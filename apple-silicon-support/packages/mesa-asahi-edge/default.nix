@@ -1,14 +1,29 @@
-{ lib
-, fetchFromGitLab
-, pkgs
+{
+  lib,
+  fetchFromGitLab,
+  pkgs,
 }:
 
 # don't bother to provide Darwin deps
 ((pkgs.callPackage ./vendor { }).override {
-  galliumDrivers = [ "swrast" "asahi" "virgl" "zink" ];
-  vulkanDrivers = [ "swrast" "asahi" ];
-  vulkanLayers = [ "device-select" "overlay" ];
-  eglPlatforms = [ "x11" "wayland" ];
+  galliumDrivers = [
+    "swrast"
+    "asahi"
+    "virgl"
+    "zink"
+  ];
+  vulkanDrivers = [
+    "swrast"
+    "asahi"
+  ];
+  vulkanLayers = [
+    "device-select"
+    "overlay"
+  ];
+  eglPlatforms = [
+    "x11"
+    "wayland"
+  ];
   withLibunwind = false;
   withValgrind = false;
   enableGalliumNine = true;
@@ -16,20 +31,21 @@
   enablePatentEncumberedCodecs = false;
   # libclc and other OpenCL components are needed for geometry shader support on Apple Silicon
   enableOpenCL = true;
-}).overrideAttrs (oldAttrs: {
-  # version must be the same length (i.e. no unstable or date)
-  # so that system.replaceRuntimeDependencies can work
-  version = "25.1.0";
-  src = fetchFromGitLab {
-    # tracking: https://pagure.io/fedora-asahi/mesa/commits/asahi
-    domain = "gitlab.freedesktop.org";
-    owner = "asahi";
-    repo = "mesa";
-    rev = "asahi-20250221";
-    hash = "sha256-xt49IaylZYoH3LxYu6Uxd+qRrqQfjI6FDeAD8MLeWP8=";
-  };
+}).overrideAttrs
+  (oldAttrs: {
+    # version must be the same length (i.e. no unstable or date)
+    # so that system.replaceRuntimeDependencies can work
+    version = "25.1.0";
+    src = fetchFromGitLab {
+      # tracking: https://pagure.io/fedora-asahi/mesa/commits/asahi
+      domain = "gitlab.freedesktop.org";
+      owner = "asahi";
+      repo = "mesa";
+      rev = "asahi-20250221";
+      hash = "sha256-xt49IaylZYoH3LxYu6Uxd+qRrqQfjI6FDeAD8MLeWP8=";
+    };
 
-  mesonFlags = oldAttrs.mesonFlags ++ [
+    mesonFlags = oldAttrs.mesonFlags ++ [
       # we do not build any graphics drivers these features can be enabled for
       "-Dgallium-va=disabled"
       "-Dgallium-vdpau=disabled"
@@ -70,8 +86,8 @@
       "-Denable-glcpp-tests=false"
     ];
 
-  # replace patches with ones tweaked slightly to apply to this version
-  patches = [
-    ./opencl.patch
-  ];
-})
+    # replace patches with ones tweaked slightly to apply to this version
+    patches = [
+      ./opencl.patch
+    ];
+  })
