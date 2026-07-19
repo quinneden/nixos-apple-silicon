@@ -15,6 +15,7 @@
   # especially useful at this point, but the user will need the apple-silicon-support
   # directory for their own config.
   installer.cloneConfigIncludes = [
+    "./default-configuration.nix"
     "./installer-configuration.nix"
     "./apple-silicon-support"
   ];
@@ -23,6 +24,7 @@
   boot.postBootCommands = lib.optionalString config.installer.cloneConfig ''
     if ! [ -e /etc/nixos/apple-silicon-support ]; then
       mkdir -p /etc/nixos
+      cp ${./default-configuration.nix} /etc/nixos/default-configuration.nix
       cp ${./installer-configuration.nix} /etc/nixos/installer-configuration.nix
       cp -r ${../apple-silicon-support} /etc/nixos/apple-silicon-support
     fi

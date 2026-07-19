@@ -2,7 +2,7 @@
   description = "Apple Silicon support for NixOS";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-compat.url = "github:nix-community/flake-compat";
   };
 
@@ -47,15 +47,11 @@
           pkgs = import inputs.nixpkgs {
             crossSystem.system = "aarch64-linux";
             localSystem.system = system;
-            overlays = [
-              outputs.overlays.default
-            ];
+            overlays = [ outputs.overlays.default ];
           };
         in
         {
-          inherit (pkgs)
-            uboot-asahi
-            ;
+          inherit (pkgs) uboot-asahi;
 
           linux-asahi = pkgs.linux-asahi.kernel;
 

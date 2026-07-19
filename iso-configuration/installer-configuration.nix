@@ -69,7 +69,12 @@
 
   isoImage.squashfsCompression = "zstd -Xcompression-level 6";
 
-  environment.systemPackages = with pkgs; [ wormhole-william ];
+  environment.systemPackages = with pkgs; [
+    btrfs-progs
+    micro
+    gptfdisk
+    wormhole-william
+  ];
 
   # save space and compilation time. might revise?
   hardware.enableAllFirmware = lib.mkForce false;
@@ -89,9 +94,7 @@
         (final: prev: {
           # disabling pcsclite avoids the need to cross-compile gobject
           # introspection stuff which works now but is slow and unnecessary
-          libfido2 = prev.libfido2.override {
-            withPcsclite = false;
-          };
+          libfido2 = prev.libfido2.override { withPcsclite = false; };
           openssh = prev.openssh.overrideAttrs (old: {
             # we have to cross compile openssh ourselves for whatever reason
             # but the tests take quite a long time to run
@@ -100,15 +103,11 @@
 
           # avoids having to compile a bunch of big things (like texlive) to
           # compute translations
-          util-linux = prev.util-linux.override {
-            translateManpages = false;
-          };
+          util-linux = prev.util-linux.override { translateManpages = false; };
 
           # avoids broken cross-compilation
           # https://github.com/NixOS/nixpkgs/pull/460394/
-          libcap = prev.libcap.override {
-            withGo = false;
-          };
+          libcap = prev.libcap.override { withGo = false; };
         })
       ];
 
@@ -126,6 +125,11 @@
   # We do not use LTS kernel, thus disable ZFS to match latest-kernel specialisation
   # and avoid breaking the installer image when ZFS does not build against our kernel.
   boot.supportedFilesystems.zfs = false;
+
+  nix.settings.experimental-features = [
+    "flakes"
+    "nix-command"
+  ];
 
   # avoid error that flakes must be enabled when nixos-install uses <nixpkgs>
   nixpkgs.flake.setNixPath = false;
